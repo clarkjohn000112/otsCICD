@@ -20,6 +20,16 @@ pipeline {
             }
         }
 
+        stage('Deploy') {
+            steps {
+                dir('repository') {
+                    bat '''
+                        e2ebridge deploy repository/IPSHealthCheckBN.rep -h ec2-52-74-183-0.ap-southeast-1.compute.amazonaws.com -u ccasin -P Asdf!234 -o overwrite --port 8080
+                    '''
+                }
+            }
+        }
+
         stage('Run Test Command') {
             steps {
                 // Example running your jar if needed
