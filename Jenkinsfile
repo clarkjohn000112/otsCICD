@@ -24,31 +24,28 @@ pipeline {
             steps {
                 dir('repository') {
                     sh '''
-                        #!/bin/bash
-                        set -e
-                        
-                        # Request token
-                        TOKEN=$(curl -s --location \
-                          'https://ec2-18-140-203-30.ap-southeast-1.compute.amazonaws.com/ots/keycloak/realms/PAS/protocol/openid-connect/token' \
-                          --header 'Content-Type: application/x-www-form-urlencoded' \
-                          --data-urlencode 'username=ccasin' \
-                          --data-urlencode 'password=Asdf!234' \
-                          --data-urlencode 'client_id=bridge' \
-                          --data-urlencode 'grant_type=password' \
-                          --data-urlencode 'client_secret=password' \
-                        | jq -r '.access_token')
-                        
-                        echo "Got token: ${TOKEN:0:20}..."
-                        
-                        # Deploy
-                        curl -k -X POST \
-                          'https://ec2-18-140-203-30.ap-southeast-1.compute.amazonaws.com/ots/bridge/bridge/rest/services?overwrite=true&overwritePrefs=false&startup=true&preserveNodeModules=false&npmInstall=false&runScripts=false&stopTimeout=10&allowKill=false' \
-                          -H "Authorization: Bearer $TOKEN" \
-                          -H 'accept: application/json' \
-                          -H 'Content-Type: multipart/form-data' \
-                          -F 'uploadFile=@IPSHealthCheckBN.rep'
-                        '''
-
+                    #!/bin/bash
+                    set -e
+                    
+                    TOKEN=$(curl -s -k --location \
+                      'https://ec2-18-140-203-30.ap-southeast-1.compute.amazonaws.com/ots/keycloak/realms/PAS/protocol/openid-connect/token' \
+                      --header 'Content-Type: application/x-www-form-urlencoded' \
+                      --data-urlencode 'username=ccasin' \
+                      --data-urlencode 'password=Asdf!234' \
+                      --data-urlencode 'client_id=bridge' \
+                      --data-urlencode 'grant_type=password' \
+                      --data-urlencode 'client_secret=password' \
+                    | jq -r '.access_token')
+                    
+                    echo "Got token: ${TOKEN:0:20}..."
+                    
+                    curl -k -X POST \
+                      'https://ec2-18-140-203-30.ap-southeast-1.compute.amazonaws.com/ots/bridge/bridge/rest/services?overwrite=true&overwritePrefs=false&startup=true&preserveNodeModules=false&npmInstall=false&runScripts=false&stopTimeout=10&allowKill=false' \
+                      -H "Authorization: Bearer $TOKEN" \
+                      -H 'accept: application/json' \
+                      -H 'Content-Type: multipart/form-data' \
+                      -F 'uploadFile=@IPSHealthCheckBN.rep'
+                    '''
                 }
             }
         }
