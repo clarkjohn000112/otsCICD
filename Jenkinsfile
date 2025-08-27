@@ -24,7 +24,11 @@ pipeline {
             steps {
                 dir('repository') {
                     sh '''
-                        e2ebridge deploy IPSHealthCheckBN.rep -h ec2-52-74-183-0.ap-southeast-1.compute.amazonaws.com -u ccasin -P Asdf!234 -o overwrite --port 8080
+                        curl -X POST \
+                          'https://ec2-18-140-203-30.ap-southeast-1.compute.amazonaws.com/ots/bridge/bridge/rest/services?overwrite=true&overwritePrefs=false&startup=true&preserveNodeModules=false&npmInstall=false&runScripts=false&stopTimeout=10&allowKill=false' \
+                          -H 'accept: application/json' \
+                          -H 'Content-Type: multipart/form-data' \
+                          -F 'uploadFile=@IPSHealthCheckBN.rep'
                     '''
                 }
             }
